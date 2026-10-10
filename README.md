@@ -1,4 +1,4 @@
-# CodeAlpha_ProjectManagementTool
+# CodeAlpha_tasks
 
 A Java + Spring Boot + MySQL task board with an HTML/CSS/JavaScript frontend.
 
