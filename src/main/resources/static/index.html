@@ -1,0 +1,383 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TaskBloom — Project Workspace</title>
+  <link rel="stylesheet" href="/style.css">
+
+  <style>
+    /* Theme toggle button */
+    .theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin: 12px 0 18px;
+      padding: 10px 16px;
+      border: 1px solid #7952c7;
+      border-radius: 12px;
+      background: #7952c7;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .theme-toggle:hover {
+      background: #6840b5;
+    }
+
+    /* Dark plum + violet theme */
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      --page-bg: #17121f;
+      --panel-bg: #241b30;
+      --sidebar-bg: #1e1728;
+      --text-main: #f5efff;
+      --text-muted: #b9accb;
+      --border-color: #3b2d4b;
+      --accent: #a783f2;
+      --soft-accent: #352449;
+      --input-bg: #2b2138;
+    }
+
+    html[data-theme="dark"] body {
+      background: var(--page-bg, #17121f);
+      color: var(--text-main, #f5efff);
+    }
+
+    html[data-theme="dark"] .sidebar,
+    html[data-theme="dark"] header,
+    html[data-theme="dark"] .stat,
+    html[data-theme="dark"] .column,
+    html[data-theme="dark"] .task-card,
+    html[data-theme="dark"] .modal,
+    html[data-theme="dark"] .board,
+    html[data-theme="dark"] .welcome {
+      background-color: var(--panel-bg, #241b30);
+      color: var(--text-main, #f5efff);
+      border-color: var(--border-color, #3b2d4b);
+    }
+
+    html[data-theme="dark"] .sidebar {
+      background-color: var(--sidebar-bg, #1e1728);
+    }
+
+    html[data-theme="dark"] h1,
+    html[data-theme="dark"] h2,
+    html[data-theme="dark"] h3,
+    html[data-theme="dark"] p,
+    html[data-theme="dark"] b,
+    html[data-theme="dark"] label,
+    html[data-theme="dark"] .crumb,
+    html[data-theme="dark"] .nav,
+    html[data-theme="dark"] .project-name,
+    html[data-theme="dark"] .stat-number,
+    html[data-theme="dark"] .stat-top {
+      color: var(--text-main, #f5efff);
+    }
+
+    html[data-theme="dark"] input,
+    html[data-theme="dark"] select,
+    html[data-theme="dark"] textarea {
+      background-color: var(--input-bg, #2b2138);
+      color: var(--text-main, #f5efff);
+      border-color: var(--border-color, #3b2d4b);
+    }
+
+    html[data-theme="dark"] input::placeholder,
+    html[data-theme="dark"] textarea::placeholder {
+      color: var(--text-muted, #b9accb);
+    }
+
+    html[data-theme="dark"] .secondary,
+    html[data-theme="dark"] .nav.active {
+      background-color: var(--soft-accent, #352449);
+      color: var(--text-main, #f5efff);
+      border-color: var(--border-color, #3b2d4b);
+    }
+
+    html[data-theme="dark"] .theme-toggle {
+      background: #352449;
+      border-color: #a783f2;
+      color: #f5efff;
+    }
+  </style>
+</head>
+
+<body>
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark">✦</span>
+      <span>task<span class="accent">bloom</span>
+        <small>PROJECT WORKSPACE</small>
+      </span>
+    </div>
+
+    <div class="workspace-label">WORKSPACE</div>
+    <button class="nav active">▦ &nbsp; Overview</button>
+    <button class="nav" id="focusBtn">◷ &nbsp; Focus mode <span class="tiny">TODAY</span></button>
+
+    <div class="workspace-label projects-label">
+      YOUR WORKSPACE
+      <button id="addProjectBtn" title="Add project">＋</button>
+    </div>
+
+    <div id="projectList" class="project-list">
+      <div class="project-name selected"><i></i> Product launch</div>
+      <div class="project-name"><i></i> Website refresh</div>
+      <div class="project-name"><i></i> Brand strategy</div>
+    </div>
+
+    <div class="sidebar-bottom">
+      <div class="avatar">S</div>
+      <div><b>Sowmiya</b><small>Workspace owner</small></div>
+      <span class="online"></span>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <header>
+      <div class="crumb">Workspace <span>/</span> <b>Overview</b></div>
+      <div class="header-right">
+        <span class="today" id="today"></span>
+        <div class="avatar small">S</div>
+      </div>
+    </header>
+
+    <section class="welcome">
+      <div>
+        <div class="eyebrow">SATURDAY, OCTOBER 10 <span>✦</span></div>
+        <h1>Make room for <em>great work.</em></h1>
+        <p>A little progress each day adds up to remarkable results.</p>
+      </div>
+      <button class="primary" id="newTaskTop">＋ New task</button>
+    </section>
+
+    <!-- Theme toggle -->
+    <button id="themeToggle" class="theme-toggle" type="button"
+            aria-label="Switch to dark mode">
+      <span id="themeIcon">🌙</span>
+      <span id="themeLabel">Dark mode</span>
+    </button>
+
+    <section class="stats">
+      <article class="stat">
+        <div class="stat-top">Total tasks <span class="stat-icon lavender">▤</span></div>
+        <div class="stat-number" id="totalCount">0</div>
+        <div class="stat-foot">Across your workspace</div>
+      </article>
+
+      <article class="stat">
+        <div class="stat-top">In progress <span class="stat-icon peach">◴</span></div>
+        <div class="stat-number" id="progressCount">0</div>
+        <div class="stat-foot">Keep the momentum</div>
+      </article>
+
+      <article class="stat">
+        <div class="stat-top">Completed <span class="stat-icon mint">✓</span></div>
+        <div class="stat-number" id="doneCount">0</div>
+        <div class="stat-foot"><span id="completionRate">0%</span> completion rate</div>
+      </article>
+
+      <article class="stat">
+        <div class="stat-top">High priority <span class="stat-icon rose">↗</span></div>
+        <div class="stat-number" id="urgentCount">0</div>
+        <div class="stat-foot">Needs your attention</div>
+      </article>
+    </section>
+
+    <section class="board-head">
+      <div>
+        <h2>Project board <span class="board-dot"></span></h2>
+        <p>Turn big ideas into small, achievable steps.</p>
+      </div>
+
+      <div class="board-actions">
+        <input id="search" placeholder="⌕  Search tasks..." aria-label="Search tasks">
+
+        <select id="priorityFilter" aria-label="Filter by priority">
+          <option value="ALL">All priorities</option>
+          <option>URGENT</option>
+          <option>HIGH</option>
+          <option>MEDIUM</option>
+          <option>LOW</option>
+        </select>
+
+        <button class="primary" id="newTaskBoard">＋ Add task</button>
+      </div>
+    </section>
+
+    <section class="board" id="board">
+
+      <div class="column" data-status="TODO">
+        <div class="column-head">
+          <span class="status-dot todo-dot"></span>
+          <b>To do</b>
+          <span class="column-count" id="count-TODO">0</span>
+          <button class="more" data-add="TODO">＋</button>
+        </div>
+        <div class="task-list" id="list-TODO"></div>
+      </div>
+
+      <div class="column" data-status="IN_PROGRESS">
+        <div class="column-head">
+          <span class="status-dot progress-dot"></span>
+          <b>In progress</b>
+          <span class="column-count" id="count-IN_PROGRESS">0</span>
+          <button class="more" data-add="IN_PROGRESS">＋</button>
+        </div>
+        <div class="task-list" id="list-IN_PROGRESS"></div>
+      </div>
+
+      <div class="column" data-status="REVIEW">
+        <div class="column-head">
+          <span class="status-dot review-dot"></span>
+          <b>Review</b>
+          <span class="column-count" id="count-REVIEW">0</span>
+          <button class="more" data-add="REVIEW">＋</button>
+        </div>
+        <div class="task-list" id="list-REVIEW"></div>
+      </div>
+
+      <div class="column" data-status="DONE">
+        <div class="column-head">
+          <span class="status-dot done-dot"></span>
+          <b>Done</b>
+          <span class="column-count" id="count-DONE">0</span>
+          <button class="more" data-add="DONE">＋</button>
+        </div>
+        <div class="task-list" id="list-DONE"></div>
+      </div>
+
+    </section>
+
+    <footer>
+      ✦ TaskBloom
+      <span>Small steps. Meaningful progress.</span>
+      <span id="connection">Connecting to your workspace…</span>
+    </footer>
+
+  </main>
+</div>
+
+<div class="modal-backdrop" id="modalBackdrop">
+  <form class="modal" id="taskForm">
+
+    <div class="modal-top">
+      <div>
+        <div class="eyebrow">WORKSPACE TASK</div>
+        <h2 id="modalTitle">Create a task</h2>
+      </div>
+      <button type="button" class="close" id="closeModal">×</button>
+    </div>
+
+    <label>Task title *
+      <input id="taskTitle" maxlength="140" required placeholder="e.g. Prepare launch checklist">
+    </label>
+
+    <label>Description
+      <textarea id="taskDescription" rows="3" placeholder="What needs to get done?"></textarea>
+    </label>
+
+    <div class="form-row">
+      <label>Assignee
+        <input id="taskAssignee" placeholder="Team member name">
+      </label>
+      <label>Due date
+        <input id="taskDueDate" type="date">
+      </label>
+    </div>
+
+    <div class="form-row">
+      <label>Priority
+        <select id="taskPriority">
+          <option value="LOW">Low</option>
+          <option value="MEDIUM" selected>Medium</option>
+          <option value="HIGH">High</option>
+          <option value="URGENT">Urgent</option>
+        </select>
+      </label>
+
+      <label>Status
+        <select id="taskStatus">
+          <option value="TODO">To do</option>
+          <option value="IN_PROGRESS">In progress</option>
+          <option value="REVIEW">Review</option>
+          <option value="DONE">Done</option>
+        </select>
+      </label>
+    </div>
+
+    <label>Project
+      <select id="taskProject"></select>
+    </label>
+
+    <label>Comment / note
+      <textarea id="taskComments" rows="2" placeholder="Add context for your team…"></textarea>
+    </label>
+
+    <div class="modal-actions">
+      <button type="button" class="secondary" id="cancelModal">Cancel</button>
+      <button class="primary" type="submit">Save task ↗</button>
+    </div>
+
+    <p class="form-message" id="formMessage"></p>
+  </form>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script src="/app.js"></script>
+
+<script>
+(function () {
+  const button = document.getElementById("themeToggle");
+  const icon = document.getElementById("themeIcon");
+  const label = document.getElementById("themeLabel");
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+
+    const dark = theme === "dark";
+    icon.textContent = dark ? "☀️" : "🌙";
+    label.textContent = dark ? "Light mode" : "Dark mode";
+    button.setAttribute(
+      "aria-label",
+      dark ? "Switch to light mode" : "Switch to dark mode"
+    );
+  }
+
+  let savedTheme = "light";
+
+  try {
+    savedTheme = localStorage.getItem("taskbloom-theme") || "light";
+  } catch (error) {
+    // Continue with light theme if browser storage is unavailable.
+  }
+
+  applyTheme(savedTheme);
+
+  button.addEventListener("click", function () {
+    const current = document.documentElement.getAttribute("data-theme");
+    const next = current === "dark" ? "light" : "dark";
+
+    applyTheme(next);
+
+    try {
+      localStorage.setItem("taskbloom-theme", next);
+    } catch (error) {
+      // Theme works for this page even if storage is unavailable.
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
