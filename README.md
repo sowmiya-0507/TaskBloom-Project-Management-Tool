@@ -1,4 +1,4 @@
-# CodeAlpha_tasks
+# Taskbloom-ProjectManagement-Tool
 
 A Java + Spring Boot + MySQL task board with an HTML/CSS/JavaScript frontend.
 
